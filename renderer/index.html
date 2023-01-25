@@ -30,12 +30,12 @@
 			import * as THREE from 'three';
 
 			import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 			let container;
 
-			let camera, scene, renderer;
+			let camera, scene, renderer, controls;
 
-			let mouseX = 0, mouseY = 0;
 
 			let windowHalfX = window.innerWidth / 2;
 			let windowHalfY = window.innerHeight / 2;
@@ -44,7 +44,7 @@
 
 			init();
 			animate();
-
+			// render();
 
 			function init() {
 
@@ -53,14 +53,18 @@
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 200 );
 
-				camera.position.x = 100;
-				camera.position.y = 100;
-				camera.position.z = 30;
+
+				camera.position.x = - 30.05629861158163;
+				camera.position.y = 11.300940580455235;
+				camera.position.z = 27.268143022212584;
+				camera.rotation.x = - 0.392890195410322;
+				camera.rotation.y = - 0.79444785408965;
+				camera.rotation.z = - 0.2874994113294767;
 
 				// scene
 
 				scene = new THREE.Scene();
-				const ambientLight = new THREE.AmbientLight( 0xfffff, 1 );
+				const ambientLight = new THREE.AmbientLight( 0xfffff, 1.2 );
 				scene.add( ambientLight );
 				const pointLight = new THREE.PointLight( 0xffffff, .1 );
 				camera.add( pointLight );
@@ -89,7 +93,8 @@
 
 					} );
 
-					// object.position.x = - 10;
+					object.position.x = - 10;
+					object.position.y = 0;
 					scene.add( object );
 
 				}
@@ -119,6 +124,8 @@
 				const loader = new OBJLoader( manager );
 				loader.load( '390_stata_vibe.obj', function ( obj ) {
 
+					// loader.load( '390_square_straight.obj', function ( obj ) {
+
 					object = obj;
 
 
@@ -126,14 +133,48 @@
 
 				//
 
-				renderer = new THREE.WebGLRenderer( { alpha: true } );
+				renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
 				// renderer.setClearColor( 0x000000, 0 );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
-				document.addEventListener( 'mousemove', onDocumentMouseMove );
+
+				// document.addEventListener( 'mousemove', onDocumentMouseMove );
+
+
+				// controls
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.listenToKeyEvents( window ); // optional
+
+				controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+
+				controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+				controls.dampingFactor = 0.05;
+
+				controls.screenSpacePanning = false;
+
+				// controls.minDistance = 1000;
+				// controls.maxDistance = 500;
+
+				// controls.maxPolarAngle = Math.PI / 2;
+
+
+				// var controls = new OrbitControls( camera, renderer.domElement );//Create a control object
+				// controls.addEventListener( 'change', render );
 
 				window.addEventListener( 'resize', onWindowResize );
+
+	// 		window.addEventListener( 'keydown', ( e ) => {
+
+	// 			if ( e.key === 's' ) {
+
+	// 				e.preventDefault();
+	// 				saveCameraPosition();
+
+	// }
+
+	// } );
 
 			}
 
@@ -161,35 +202,60 @@
 			function animate() {
 
 				requestAnimationFrame( animate );
-				render();
+				// render();
 				const time = Date.now() * 0.0004;
 
 				object.rotation.x = time;
 				object.rotation.y = time;
-
+				// controls.update();
 				render();
 
 			}
 
 
-			// function render() {
-
-			// 	renderer.render( scene, camera );
-			// 	labelRenderer.render( scene, camera );
-
-			// }
-
 			function render() {
-
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
-				camera.lookAt( scene.position );
 
 				renderer.render( scene, camera );
 
+				// labelRenderer.render( scene, camera );
+				// requestAnimationFrame( render );
+
 			}
 
+
+
+			// function render() {
+
+			// 	renderer.render( scene, camera );//Perform rendering operations
+			// 	// mesh.rotateY(0.01);//rotate 0.01 radians around the y axis each time
+			// 	requestAnimationFrame( render );//
+
+			// 	// camera.position.x += ( mouseX - camera.position.x ) * .05;
+			// 	// camera.position.y += ( - mouseY - camera.position.y ) * .05;
+
+			// 	// camera.lookAt( scene.position );
+
+			// 	// renderer.render( scene, camera );
+
+			// }
+
+function saveCameraPosition() {
+
+	console.log( 'camera.hasPosition', 'true' );
+
+	console.log( 'camera.position.x', camera.position.x.toString() );
+	console.log( 'camera.position.y', camera.position.y.toString() );
+	console.log( 'camera.position.z', camera.position.z.toString() );
+
+	console.log( 'camera.rotation.x', camera.rotation.x.toString() );
+	console.log( 'camera.rotation.y', camera.rotation.y.toString() );
+	console.log( 'camera.rotation.z', camera.rotation.z.toString() );
+
+	console.log( 'controls.target.x', controls.target.x.toString() );
+	console.log( 'controls.target.y', controls.target.y.toString() );
+	console.log( 'controls.target.z', controls.target.z.toString() );
+
+}
 		</script>
 
 	</body>
